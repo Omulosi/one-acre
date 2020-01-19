@@ -8,6 +8,7 @@ load_dotenv(os.path.join(basedir, '.env'))
 class Config(object):
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    # JWTs
     JWT_SECRET_KEY = os.getenv('SECRET_KEY', 'imasosecret')
     SECRET_KEY = os.getenv('SECRET_KEY')
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=120)
@@ -15,6 +16,9 @@ class Config(object):
     JWT_BLACKLIST_ENABLED = True
     JWT_BLACKLIST_TOKEN_CHECKS = ['access', 'refresh']
     PROPAGATE_EXCEPTIONS = True
+
+    # Flask-admin
+    FLASK_ADMIN_SWATCH = 'flatly'
 
 class TestConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.getenv('TEST_DATABASE_URL')

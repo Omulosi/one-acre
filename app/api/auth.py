@@ -18,12 +18,13 @@ from app.helpers import (
     is_token_revoked, add_token_to_database, get_user_tokens,
     revoke_token, unrevoke_token,
 )
-from .common.utils import (valid_email, valid_password)
+from .common.utils import (valid_email, valid_password, valid_role)
 from .common.errors import raise_error
 
 parser = reqparse.RequestParser()
 parser.add_argument('email', type=str) 
 parser.add_argument('password', type=str)
+parser.add_argument('role', type=str)
 
 class SignUP(Resource):
 
@@ -31,26 +32,32 @@ class SignUP(Resource):
         args = parser.parse_args()
         email = args.get('email')
         password = args.get('password') 
+        role = args.get('role') 
 
         if email is None:
-            return raise_error(400, "Missing 'email' in body")
+            return raise_error(400, "Email is missing")
         if password is None:
-            return raise_error(400, "Missing 'password' in body")
+            return raise_error(400, "Password is missing")
+        if role is None:
+            return raise_error(400, "role is missing")
 
 
         # validate input data
-        if not valid_email(email):
+        if valid_email(email) is None:
             return raise_error(400, "Invalid email format")
-        if not valid_password(password):
+        if valid_password(password) is None:
             return raise_error(400, "Invalid password. Should be at least 5 "
                     "characters long and include a number and a special "
                     "character")
+        if valid_role(role) is None:
+            return raise_error(400, "Invalid role")
+
 
         user = User.query.filter_by(email=email).first()
         if user is not None:
             return raise_error(400, "User already exists")
 
-        user = User(email=email)
+        user = User(email=email, role=role)
         user.set_password(password)
 
         db.session.add(user)
