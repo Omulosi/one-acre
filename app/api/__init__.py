@@ -7,6 +7,8 @@ api = Api(bp)
 from .farms import FarmAPI
 from .auth import SignUP, SignIn, RefreshToken
 from .tokens import Tokens
+from .users import Users
+from .funded_farms import FundedFarmAPI
 
 # routes for farm resource
 api.add_resource(
@@ -37,3 +39,21 @@ api.add_resource(
         '/auth/tokens',
         '/auth/tokens/<token_id>'
         )
+
+# users
+api.add_resource(
+    Users,
+    '/users',
+    '/users/<id>',
+    '/users/<id>/<field>',
+    endpoint='users'
+    )
+
+# Funded farm
+
+api.add_resource(
+    FundedFarmAPI,
+    '/funded_farms',
+    '/funded_farms/<id>',
+    '/funded_farms/<id>/<field>',
+    )

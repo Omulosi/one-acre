@@ -14,6 +14,14 @@ from app.models import User
 
 EMAIL_PATTERN = re.compile(r".+@[\w]+\.[\w]")
 
+def valid_role(role):
+    try:
+        role = int(role)
+        assert role in (0, 1)
+    except (AssertionError, ValueError):
+        role = None
+    return role
+
 def valid_string(value):
     if value:
         return value.strip()
@@ -38,9 +46,26 @@ def valid_date(date):
 def valid_margin(margin):
     try:
         margin = float(margin)
-    except ValueError:
-        units = None
+        assert margin >= 0
+        assert margin <= 100
+    except (ValueError, TypeError, AssertionError):
+        margin = None
     return margin
+
+def valid_status(status):
+    try:
+        assert status in ('inactive', 'pending', 'confirmed')
+    except AssertionError:
+        status = None 
+    return status
+
+def valid_price(price):
+    try:
+        price = float(price)
+        assert price > 0
+    except (ValueError, TypeError, AssertionError):
+        price = None
+    return price
 
 def valid_farm_stage(value):
     if value in ('open', 'closed'):
