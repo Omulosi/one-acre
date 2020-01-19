@@ -31,7 +31,7 @@ def create_app(config=Config):
     from app.api import bp
     app.register_blueprint(bp, url_prefix='/api')
 
-    CORS(app)
+    CORS(app, resources={r"/api/*": {"origins": "*"}})
 
     @app.route('/')
     def index():
