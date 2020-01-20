@@ -157,7 +157,6 @@ class FarmAPI(Resource):
         elif field == 'stage':
             new_field_value = valid_farm_stage(new_field_value)
         elif field == 'location':
-            A
             new_field_value = valid_location(new_field_value)
         elif field == 'active':
             new_field_value = valid_active_status(new_field_value)
