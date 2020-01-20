@@ -13,30 +13,6 @@ class UserAdmin(sqla.ModelView):
         'id': {
             'readonly': True
         },
-        'farms': {
-            'readonly': True
-        },
-        'id': {
-            'readonly': True
-        },
-        'funded_farms': {
-            'readonly': True
-        },
-        'bank_name': {
-            'readonly': True
-        },
-        'bank_account_num': {
-            'readonly': True
-        },
-        'bank_account_name': {
-            'readonly': True
-        },
-        'email': {
-            'readonly': True
-        },
-        'role': {
-            'readonly': True
-        },
 
     }
 
@@ -62,7 +38,8 @@ class UserAdmin(sqla.ModelView):
         'confirmed',
         'createdon',
         'farms',
-        'funded_farms'
+        'funded_farms',
+        'password_hash'
     ]
     column_searchable_list = [
         'email',
