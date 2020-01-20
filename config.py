@@ -20,6 +20,8 @@ class Config(object):
     # Flask-admin
     FLASK_ADMIN_SWATCH = 'flatly'
 
+    CORS_HEADERS = 'Content-Type'
+
 class TestConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.getenv('TEST_DATABASE_URL')
     TESTING = True
