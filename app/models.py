@@ -1,23 +1,31 @@
 from datetime import datetime
+#from app.model_types import ChoiceType
+from sqlalchemy_utils.types.choice import ChoiceType
 from . import db, bcrypt
 
 
 class User(db.Model):
     
+    ROLE = [
+        ('0', 'Funder'),
+        ('1', 'Farmer')
+    ]
+
     __tablename__ = 'users'
+
     
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(140))
     bank_name = db.Column(db.String(64), default='')
-    role = db.Column(db.String(64), default='')
+    role = db.Column(ChoiceType(ROLE), default='') # 0 or 1
     admin = db.Column(db.Boolean, default=False)
     createdon = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     bank_account_num = db.Column(db.String(64), default='')
     bank_account_name = db.Column(db.String(64), default='')
-    farms = db.relationship('Farm', backref='person', lazy='dynamic')
-    funded_farms = db.relationship('FundedFarm', backref='person', lazy='dynamic')
-    confirmed = db.Column(db.Boolean, default=False)
+    # farms = db.relationship('Farm', backref='person', lazy='dynamic')
+    # funded_farms = db.relationship('FundedFarm', backref='person', lazy='dynamic')
+    confirmed = db.Column(db.Boolean, default=False) # email-confirmed
 
     def set_password(self, password):
         self.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
@@ -27,9 +35,10 @@ class User(db.Model):
 
     @property
     def serialize(self):
+        role = self.role.code if self.role else ''
         return {'id': self.id,
                 'email': self.email,
-                'role': self.role,
+                'role': role,
                 'createdon': self.createdon.strftime('%a, %d %b %Y'),
                 'bank_name': self.bank_name,
                 'bank_account_num': self.bank_account_num,
@@ -40,17 +49,22 @@ class User(db.Model):
 
 
     def __repr__(self):
-        return '<User {}>'.format(self.email)
+        return '<{}>'.format(self.email)
 
 
 class Farm(db.Model):
+
+    STAGE = [
+        ('open', 'open'),
+        ('closed', 'closed')
+    ]
 
     __tablename__ = 'farm'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
     description = db.Column(db.Text)
-    stage = db.Column(db.String(64), default="closed") # open/closed
+    stage = db.Column(ChoiceType(STAGE), default="closed") # open/closed
     start_date = db.Column(db.DateTime) # year, month, day
     duration = db.Column(db.String(300))
     location = db.Column(db.String(300))
@@ -58,13 +72,13 @@ class Farm(db.Model):
     margin = db.Column(db.Float) # Expected profit margin
     price = db.Column(db.Float) # price per unit
     active = db.Column(db.Boolean, default=False) # operates when active only
-    status = db.Column(db.String(64)) # Funding status (pending/confirmed)
     createdon = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    farmer = db.relationship(User, foreign_keys=[user_id], backref="farms")
 
     @property
     def serialize(self):
-
+        stage = self.stage.code if self.stage else ''
         return {'id': self.id,
                 'name': self.name,
                 'location': self.location,
@@ -74,32 +88,40 @@ class Farm(db.Model):
                 'start_date': self.start_date and self.start_date.strftime('%a, %d %b %Y'),
                 'margin': self.margin,
                 'duration': self.duration,
-                'stage': self.stage,
+                'stage': stage,
                 'description': self.description,
                 'createdon': self.createdon.strftime('%a, %d %b %Y %H:%M %p'),
                 'createdby': self.user_id,
-                'status': self.status
                 }
 
     def __repr__(self):
-        return '<Farm {}>'.format(self.farm_name)
+        return '<{}>'.format(self.name)
 
 class FundedFarm(db.Model):
+
+    STATUS = [
+        ('pending', 'pending'),
+        ('confirmed', 'confirmed')
+    ]
 
     __tablename__ = 'funded_farm'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
     createdon = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    status = db.Column(db.String(64), default="inactive") #pending/confirmed
+    status = db.Column(ChoiceType(STATUS)) #pending/confirmed
+    # status = db.Column(db.String(64), default="") #pending/confirmed
     amount = db.Column(db.Float) # amount paid for this farm
     units = db.Column(db.Integer) # No of units paid for
     payout = db.Column(db.Float); # expected payout
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    funder = db.relationship(User, foreign_keys=[user_id],
+                             backref="funded_farms")
     farm_id = db.Column(db.Integer)
 
     @property
     def serialize(self):
+        status = self.status.code if self.status else ''
 
         return {'id': self.id,
                 'name': self.name,
@@ -113,7 +135,7 @@ class FundedFarm(db.Model):
                 }
 
     def __repr__(self):
-        return '<Funded Farm {}>'.format(self.name)
+        return '<{}>'.format(self.name)
 
 
 class TokenBlacklist(db.Model):

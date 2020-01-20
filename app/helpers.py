@@ -10,6 +10,7 @@ from datetime import datetime
 from flask_jwt_extended import decode_token
 from sqlalchemy.orm.exc import NoResultFound
 
+
 from .exceptions import TokenNotFound
 from .models import TokenBlacklist
 from . import db
@@ -106,3 +107,5 @@ def prune_database():
     for token in expired:
         db.session.delete(token)
     db.session.commit()
+
+

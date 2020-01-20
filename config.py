@@ -2,6 +2,8 @@ import os
 from datetime import timedelta
 from dotenv import load_dotenv
 
+from app.utils import CustomJSONEncoder
+
 basedir = os.path.abspath(os.path.dirname(__file__))
 load_dotenv(os.path.join(basedir, '.env'))
 
@@ -18,9 +20,14 @@ class Config(object):
     PROPAGATE_EXCEPTIONS = True
 
     # Flask-admin
-    FLASK_ADMIN_SWATCH = 'flatly'
+    FLASK_ADMIN_SWATCH = 'cerulean'
 
     CORS_HEADERS = 'Content-Type'
+
+    RESTFUL_JSON = {'separators': (', ', ': '),
+                    'indent': 2,
+                    'cls': CustomJSONEncoder}
+
 
 class TestConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.getenv('TEST_DATABASE_URL')

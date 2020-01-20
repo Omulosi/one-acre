@@ -86,10 +86,8 @@ class FundedFarmAPI(Resource):
             # Return a collection of all funded_farms
             # that are pending or confirmed
             all_funded_farms = FundedFarm.query.filter(
-                FundedFarm.status.in_(["pending","confirmed"])
-            ).filter(
                 FundedFarm.user_id==current_user.id
-            )
+            ).all()
             output = {}
             output['status'] = 200
             data = all_funded_farms

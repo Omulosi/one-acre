@@ -14,6 +14,7 @@ bcrypt = Bcrypt()
 jwt = JWTManager()
 admin = Admin()
 
+
 def create_app(config=Config):
     """Create the application instance"""
 
@@ -31,7 +32,8 @@ def create_app(config=Config):
     from app.api import bp
     app.register_blueprint(bp, url_prefix='/api')
 
-    CORS(app, resources={r"/api/*": {"origins": "*"}})
+    #CORS(app, resources={r"/api/*": {"origins": "*"}})
+    CORS(app)
 
     @app.route('/')
     def index():
@@ -39,4 +41,5 @@ def create_app(config=Config):
 
     return app
 
-from . import models, user_admin
+from . import models
+import app.user_admin
