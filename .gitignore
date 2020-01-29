@@ -5,3 +5,5 @@ venv/
 instance/
 .env
 pytest.ini
+*swp
+*swo
