@@ -1,10 +1,11 @@
 from datetime import datetime
 #from app.model_types import ChoiceType
 from sqlalchemy_utils.types.choice import ChoiceType
-from . import db, bcrypt
+from flask_login import UserMixin
+from . import db, bcrypt, login
 
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     
     ROLE = [
         ('0', 'Funder'),
@@ -32,6 +33,10 @@ class User(db.Model):
 
     def check_password(self, password):
         return bcrypt.check_password_hash(self.password_hash, password)
+    
+    @property
+    def is_admin(self):
+        return self.admin
 
     @property
     def serialize(self):
@@ -159,3 +164,8 @@ class TokenBlacklist(db.Model):
             'revoked': self.revoked,
             'expires': self.expires.strftime('%a, %d %b %Y %H:%M %p')
         }
+
+
+@login.user_loader
+def load_user(id):
+    return User.query.get(int(id))

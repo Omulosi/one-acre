@@ -1,8 +1,12 @@
 from flask_admin.contrib import sqla
 from flask_admin.contrib.sqla import filters
 from app.models import User
+from flask_login import current_user
 
 class UserAdmin(sqla.ModelView):
+
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.is_admin
 
     can_view_details = True  # show a modal dialog with records details
     action_disallowed_list = ['delete', ]
