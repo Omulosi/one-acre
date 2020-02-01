@@ -1,4 +1,4 @@
-from flask import url_for, redirect, render_template, request
+from flask import url_for, redirect, render_template, request, flash
 from flask_admin import helpers, expose
 from app import db
 import  flask_admin as admin
@@ -20,7 +20,11 @@ class MyAdminIndexView(admin.AdminIndexView):
         # handle user login
         form = LoginForm(request.form)
         if helpers.validate_form_on_submit(form):
-            user = form.get_user()
+            user = User.query.filter_by(email=form.email.data).first()
+            if user is None or not user.check_password(form.password.data):
+                flash('Invalid username or password')
+                self._template_args['form'] = form
+                return redirect(url_for('.login_view'))
             login_user(user)
 
         if current_user.is_authenticated:
@@ -32,8 +36,15 @@ class MyAdminIndexView(admin.AdminIndexView):
 
     @expose('/register/', methods=('GET', 'POST'))
     def register_view(self):
+        if current_user.is_authenticated:
+            return redirect(url_for('.index'))
         form = RegistrationForm(request.form)
         if helpers.validate_form_on_submit(form):
+            user = User.query.filter_by(email=form.email.data).first()
+            if user is not None:
+                flash("User already exists")
+                self._template_args['form'] = form
+                return redirect(url_for('.register_view'))
             user = User(email=form.email.data)
             user.set_password(form.password.data)
 
