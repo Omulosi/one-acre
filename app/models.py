@@ -2,7 +2,11 @@ from datetime import datetime
 #from app.model_types import ChoiceType
 from sqlalchemy_utils.types.choice import ChoiceType
 from flask_login import UserMixin
+import jwt
+from time import time
+
 from . import db, bcrypt, login
+from flask import current_app
 
 
 class User(UserMixin, db.Model):
@@ -18,7 +22,7 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(128), default='')
     last_name = db.Column(db.String(128), default='')
-    id_num = db.Column(db.Integer, primary_key=True)
+    id_num = db.Column(db.Integer)
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(140))
     bank_name = db.Column(db.String(64), default='')
@@ -52,9 +56,30 @@ class User(UserMixin, db.Model):
                 'bank_account_num': self.bank_account_num,
                 'bank_account_name': self.bank_account_name,
                 'confirmed': self.confirmed,
-                'admin': self.admin
+                'admin': self.admin,
+                'first_name': self.first_name,
+                'last_name': self.last_name,
+                'id_num': self.id_num
                 }
 
+    def get_activate_token(self, expires_in=6000):
+        return jwt.encode(
+            {'activate': self.id, 'exp': time() + expires_in },
+            current_app.config['SECRET_KEY'],
+            algorithm='HS256'
+        ).decode('utf-8')
+
+    @staticmethod
+    def verify_activate_token(token):
+        try:
+            id = jwt.decode(
+                token,
+                current_app.config['SECRET_KEY'],
+                algorithms=['HS256']
+            )['activate']
+        except:
+            return
+        return User.query.get(id)
 
     def __repr__(self):
         return '<{}>'.format(self.email)

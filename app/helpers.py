@@ -17,7 +17,8 @@ from sendgrid.helpers.mail import Mail
 from .exceptions import TokenNotFound
 from .models import TokenBlacklist
 from . import db
-from config import Config
+from flask import current_app
+
 
 def _epoch_utc_to_datetime(epoch_utc):
     """
@@ -120,6 +121,6 @@ def send_email(subject, sender, recipients, text_body, html_body):
         html_content=html_body,
         text_content=text_body
     )
-    mail = SendGridAPIClient(Config.SENDGRID_API_KEY)
+    mail = SendGridAPIClient(current_app.config['SENDGRID_API_KEY'])
     response = mail.send(msg)
     return response
