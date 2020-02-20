@@ -10,7 +10,6 @@ from app.models import User
 from app import db
 from .common.errors import raise_error
 from app.decorators import admin_required
-from app.helpers import send_email
 
 parser = reqparse.RequestParser()
 parser.add_argument('email', type=str)
@@ -44,18 +43,6 @@ class Users(Resource):
             admin=admin
         )
 
-
-        print('==========================================')
-
-        resp = send_email(
-            subject='Account Creation - One Acre',
-            sender='once-acre@hello.com',
-            recipients=email,
-            html_body='<p> You have successfully created an account on One-Acre<p>'
-        )
-        print('=========================')
-        print('email sent')
-        print(resp.body)
 
 
         db.session.add(user)

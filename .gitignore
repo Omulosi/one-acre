@@ -8,3 +8,4 @@ pytest.ini
 *swp
 *swo
 sendgrid.env
+.sendgrid.env

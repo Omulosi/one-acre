@@ -113,14 +113,14 @@ def prune_database():
         db.session.delete(token)
     db.session.commit()
 
-def send_email(subject, sender, recipients, text_body, html_body):
+def send_email(subject, sender, recipients, html_body):
     msg = Mail(
         from_email=sender,
         to_emails=recipients,
         subject=subject,
         html_content=html_body,
-        text_content=text_body
     )
+    print(current_app.config['SENDGRID_API_KEY'])
     mail = SendGridAPIClient(current_app.config['SENDGRID_API_KEY'])
     response = mail.send(msg)
     return response
