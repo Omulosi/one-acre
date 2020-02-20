@@ -6,7 +6,7 @@ from . import db, bcrypt, login
 
 
 class User(UserMixin, db.Model):
-    
+
     ROLE = [
         ('0', 'Funder'),
         ('1', 'Farmer')
@@ -14,8 +14,11 @@ class User(UserMixin, db.Model):
 
     __tablename__ = 'users'
 
-    
+
     id = db.Column(db.Integer, primary_key=True)
+    first_name = db.Column(db.String(128), default='')
+    last_name = db.Column(db.String(128), default='')
+    id_num = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(140))
     bank_name = db.Column(db.String(64), default='')
@@ -33,7 +36,7 @@ class User(UserMixin, db.Model):
 
     def check_password(self, password):
         return bcrypt.check_password_hash(self.password_hash, password)
-    
+
     @property
     def is_admin(self):
         return self.admin
