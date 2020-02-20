@@ -7,3 +7,4 @@ instance/
 pytest.ini
 *swp
 *swo
+sendgrid.env
