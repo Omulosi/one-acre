@@ -4,6 +4,7 @@ from sqlalchemy_utils.types.choice import ChoiceType
 from flask_login import UserMixin
 import jwt
 from time import time
+from sqlalchemy.orm import backref
 
 from . import db, bcrypt, login
 from flask import current_app
@@ -107,7 +108,9 @@ class Farm(db.Model):
     active = db.Column(db.Boolean, default=False) # operates when active only
     createdon = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    farmer = db.relationship(User, foreign_keys=[user_id], backref="farms")
+    farmer = db.relationship(
+        User, foreign_keys=[user_id],
+        backref=backref("farms", cascade="all, delete"))
 
     @property
     def serialize(self):
@@ -148,8 +151,9 @@ class FundedFarm(db.Model):
     units = db.Column(db.Integer) # No of units paid for
     payout = db.Column(db.Float); # expected payout
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    funder = db.relationship(User, foreign_keys=[user_id],
-                             backref="funded_farms")
+    funder = db.relationship(
+        User, foreign_keys=[user_id],
+        backref=backref("funded_farms", cascade="all, delete"))
     farm_id = db.Column(db.Integer)
 
     @property
