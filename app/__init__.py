@@ -57,3 +57,4 @@ def create_app(config=Config):
 
 from . import models
 import app.user_admin
+import app.downloads

@@ -6,7 +6,11 @@
     <div>
         {% if current_user.is_authenticated %}
         <h1>Admin Page</h1>
-        <p>
+        <hr>
+        <p style="font-size: 1.4rem; margin-bottom: 2.5rem;">
+        <a href="{{ url_for('downloads.download_page') }}">
+          Generate PDF reports
+        </a>
         </p>
         {% else %}
         <form method="POST" action="">
