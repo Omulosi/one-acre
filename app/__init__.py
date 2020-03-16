@@ -43,6 +43,9 @@ def create_app(config=Config):
     from app.api import bp
     app.register_blueprint(bp, url_prefix='/api')
 
+    from app.downloads import bp as d_bp
+    app.register_blueprint(d_bp)
+
     #CORS(app, resources={r"/api/*": {"origins": "*"}})
     CORS(app)
 

@@ -20,7 +20,7 @@ from app.helpers import (
 )
 from .common.utils import (valid_email, valid_password, valid_role)
 from .common.errors import raise_error
-from app.helpers import send_email
+from app.email import send_mail
 
 parser = reqparse.RequestParser()
 parser.add_argument('email', type=str)
@@ -73,19 +73,12 @@ class SignUP(Resource):
         add_token_to_database(refresh_token, current_app.config['JWT_IDENTITY_CLAIM'])
 
 
-        try:
-            resp = send_email(
-                subject='Account Creation - One Acre',
-                sender='once-acre@hello.com',
-                recipients=email,
-                html_body='<p> You have successfully created an account on One-Acre<p>'
-            )
-            print('email sent')
-            print(resp.body)
-            print(resp.status_code)
-        except Exception as e:
-            raise_error(500, 'Unable to send message')
-
+        send_mail(
+            from_email='one-acre@example.com',
+            to_emails=email,
+            subject='Account Creation - One Acre',
+            content='<p>You have successfully created an account on One-Acre<p>'
+        )
 
         data = {}
         data['access_token'] = access_token

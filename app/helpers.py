@@ -10,10 +10,6 @@ from datetime import datetime
 from flask_jwt_extended import decode_token
 from sqlalchemy.orm.exc import NoResultFound
 
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
-
-
 from .exceptions import TokenNotFound
 from .models import TokenBlacklist
 from . import db
@@ -112,15 +108,3 @@ def prune_database():
     for token in expired:
         db.session.delete(token)
     db.session.commit()
-
-def send_email(subject, sender, recipients, html_body):
-    msg = Mail(
-        from_email=sender,
-        to_emails=recipients,
-        subject=subject,
-        html_content=html_body,
-    )
-    print(current_app.config['SENDGRID_API_KEY'])
-    mail = SendGridAPIClient(current_app.config['SENDGRID_API_KEY'])
-    response = mail.send(msg)
-    return response

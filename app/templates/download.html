@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+</head>
+<body>
+  <h3>Generate PDF Reports</h3>
+  <p>Click on one of the links below to generate the appropriate pdf report</p>
+  <p>
+  <ul>
+    <li>
+      <a href="{{ url_for('.download_farms') }}">
+        Generate Pdf Report for all farms
+      </a>
+    </li>
+    <li>
+      <a href="{{ url_for('.download_funded_farms') }}">
+        Generate Pdf Report for all funded farms
+      </a>
+    </li>
+    <li>
+      <a href="{{ url_for('.download_users') }}">
+        Generate Pdf Report for all users
+      </a>
+    </li>
+  </ul>
+  </p>
+</body>
+</html>
