@@ -62,8 +62,18 @@ class SignUP(Resource):
         user = User(email=email, role=role)
         user.set_password(password)
 
-        db.session.add(user)
-        db.session.commit()
+        try:
+            db.session.add(user)
+
+            send_mail(
+                to_emails=email,
+                subject='Account Creation - One Acre',
+                template='register',
+                content='You have successfully created an account on One-Acre')
+            db.session.commit()
+
+        except:
+            raise
 
         # Create our JWTs
         access_token = create_access_token(identity=email)
@@ -74,12 +84,6 @@ class SignUP(Resource):
                               current_app.config['JWT_IDENTITY_CLAIM'])
         add_token_to_database(refresh_token,
                               current_app.config['JWT_IDENTITY_CLAIM'])
-
-        send_mail(
-            to_emails=email,
-            subject='Account Creation - One Acre',
-            template='register',
-            content='You have successfully created an account on One-Acre')
 
         data = {}
         data['access_token'] = access_token
