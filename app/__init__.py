@@ -8,6 +8,7 @@ from flask_admin import Admin
 from flask_login import LoginManager
 from flask_mail import Mail
 from config import Config
+from flask_bootstrap import Bootstrap
 import os
 
 db = SQLAlchemy()
@@ -17,6 +18,7 @@ jwt = JWTManager()
 admin = Admin(base_template="my_master.html")
 login_manager = LoginManager()
 mail = Mail()
+bootstrap = Bootstrap()
 
 
 def create_app(config=Config):
@@ -33,6 +35,7 @@ def create_app(config=Config):
     jwt.init_app(app)
     login_manager.init_app(app)
     mail.init_app(app)
+    bootstrap.init_app(app)
 
     from app.user_admin import CustomIndexView
     admin.init_app(app, index_view=CustomIndexView.MyAdminIndexView())
