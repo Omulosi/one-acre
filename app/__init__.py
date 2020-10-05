@@ -15,7 +15,7 @@ migrate = Migrate()
 bcrypt = Bcrypt()
 jwt = JWTManager()
 admin = Admin(base_template="my_master.html")
-login = LoginManager()
+login_manager = LoginManager()
 mail = Mail()
 
 
@@ -31,20 +31,20 @@ def create_app(config=Config):
     migrate.init_app(app, db)
     bcrypt.init_app(app)
     jwt.init_app(app)
-    login.init_app(app)
+    login_manager.init_app(app)
     mail.init_app(app)
 
     from app.user_admin import CustomIndexView
-    admin.init_app(
-        app,
-        index_view=CustomIndexView.MyAdminIndexView()
-    )
+    admin.init_app(app, index_view=CustomIndexView.MyAdminIndexView())
 
-    from app.api import bp
-    app.register_blueprint(bp, url_prefix='/api')
+    from app.api import api_blueprint
+    app.register_blueprint(api_blueprint, url_prefix='/api')
 
-    from app.downloads import bp as d_bp
-    app.register_blueprint(d_bp)
+    from app.downloads import download_blueprint
+    app.register_blueprint(download_blueprint)
+
+    from app.auth import auth_blueprint
+    app.register_blueprint(auth_blueprint, url_prefix="/auth")
 
     #CORS(app, resources={r"/api/*": {"origins": "*"}})
     CORS(app)
@@ -54,6 +54,7 @@ def create_app(config=Config):
         return 'API is live! - documentation'
 
     return app
+
 
 from . import models
 import app.user_admin

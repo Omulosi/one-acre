@@ -7,9 +7,11 @@ from app.utils import CustomJSONEncoder
 basedir = os.path.abspath(os.path.dirname(__file__))
 load_dotenv(os.path.join(basedir, '.env'))
 
+
 class Config(object):
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    APP_MAIL_SENDER = 'no-reply@oneacre.com'
     # JWTs
     JWT_SECRET_KEY = os.getenv('SECRET_KEY', 'imasosecret')
     SECRET_KEY = os.getenv('SECRET_KEY')
@@ -19,7 +21,7 @@ class Config(object):
     JWT_BLACKLIST_TOKEN_CHECKS = ['access', 'refresh']
     PROPAGATE_EXCEPTIONS = True
 
-    # sendrig -  email
+    # sendgrid -  email
     SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
 
     # Flask-admin
@@ -27,9 +29,11 @@ class Config(object):
 
     CORS_HEADERS = 'Content-Type'
 
-    RESTFUL_JSON = {'separators': (', ', ': '),
-                    'indent': 2,
-                    'cls': CustomJSONEncoder}
+    RESTFUL_JSON = {
+        'separators': (', ', ': '),
+        'indent': 2,
+        'cls': CustomJSONEncoder
+    }
 
 
 class TestConfig(Config):
