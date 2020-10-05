@@ -15,8 +15,8 @@ def password_reset(token):
             db.session.commit()
             flash('Your password has been updated.')
             return redirect(
-                url_for('password_reset'))  # front-end-host/home-page-url
+                url_for('.password_reset'))  # front-end-host/home-page-url
         else:
             return redirect(
-                url_for('password_reset'))  # front-end-host/home-page-url
+                url_for('.password_reset'))  # front-end-host/home-page-url
     return render_template('reset_password.html', form=form)
