@@ -12,6 +12,7 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     APP_MAIL_SENDER = 'no-reply@oneacre.com'
+    FRONT_END_HOST = 'http://localhost:3000'
     # JWTs
     JWT_SECRET_KEY = os.getenv('SECRET_KEY', 'imasosecret')
     SECRET_KEY = os.getenv('SECRET_KEY')
